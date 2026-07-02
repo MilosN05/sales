@@ -41,37 +41,29 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Pokreni_skriptu_za_csv
         run: |
-          files=$(git diff --name-only origin/main...HEAD)
+          files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
 
           echo "Changed files:"
           echo "$files"
-
-          found_csv=false
-
+          
+          has_csv=false
+          
           for file in $files; do
-          # samo data folder + csv
-          if [[ "$file" == data/*.csv ]]; then
-
-          found_csv=true
-          echo "🔎 Validiram: $file"
-
-          python main.py "$file"
-      
-          if [ $? -ne 0 ]; then
-            echo "❌ FAIL: $file nije validan"
-            exit 1
-          fi
-      
-          else
-            echo "❌ NIJE DOZVOLJENO: $file"
-            exit 1
+            if [[ "$file" == data/*.csv ]]; then
+              has_csv=true
+              echo "🔎 Validiram: $file"
+              python main.py "$file"
+          
+              if [ $? -ne 0 ]; then
+                echo "❌ FAIL: $file nije validan"
+                exit 1
+              fi
+          
+            else
+              echo "❌ NIJE DOZVOLJENO: $file"
+              exit 1
             fi
           done
-      
-          if [ "$found_csv" = false ]; then
-            echo "❌ Nema CSV fajlova za validaciju"
-            exit 1
-          fi
-      
-          echo "✅ SVI CSV FAJLOVI SU VALIDNI"
+          
+          echo "✅ OK"
   
