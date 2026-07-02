@@ -12,7 +12,7 @@ if len(sys.argv)==2 and sys.argv[1].endswith(".csv") :
         ucitaj_fajl=f"data/{sys.argv[1]}"
     else:
         sys.stderr.write(f"Dati {sys.argv[1]} fajl NE POSTOJI u data direktorijumu, pokrecemo {ucitaj_fajl} !\n")
-        
+
 
 
 print(f"Fajl za ucitavanje: {ucitaj_fajl}")
@@ -345,6 +345,9 @@ result = batch.validate(suite)
 
 print(result)
 print(f"Uspesno: {result.success}" )
+
+if not result.success:
+    sys.exit(1)
 
 
 
