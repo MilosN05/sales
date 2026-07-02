@@ -41,36 +41,37 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Pokreni_skriptu_za_csv
         run: |
-          while IFS= read -r file; do
-            [[ "$file" != *.csv ]] && continue
-            [[ ! -f "$file" ]] && echo "Preskačemo fajl koji ne postoji: $file" && continue
+          files=$(git diff --name-only origin/main...HEAD)
 
-            echo "Procesuiranje: $file"
-            python main.py "$file"
-            done < <(git diff --name-only --diff-filter=AM HEAD~1 HEAD | grep '\.csv$')
+          echo "Changed files:"
+          echo "$files"
 
-  # check-files:
-  #   runs-on: ubuntu-latest
+          found_csv=false
+
+          for file in $files; do
+          # samo data folder + csv
+          if [[ "$file" == data/*.csv ]]; then
+
+          found_csv=true
+          echo "🔎 Validiram: $file"
+
+          python main.py "$file"
+      
+          if [ $? -ne 0 ]; then
+            echo "❌ FAIL: $file nije validan"
+            exit 1
+          fi
+      
+          else
+            echo "❌ NIJE DOZVOLJENO: $file"
+            exit 1
+            fi
+          done
+      
+          if [ "$found_csv" = false ]; then
+            echo "❌ Nema CSV fajlova za validaciju"
+            exit 1
+          fi
+      
+          echo "✅ SVI CSV FAJLOVI SU VALIDNI"
   
-  #   steps:
-  #      - uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
-
-  #      - name: Check only CSV files
-  #        run: |
-  #         files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
-
-  #         echo "Changed files:"
-  #         echo "$files"
-
-  #         bad=$(echo "$files" | grep -v '\.csv$' || true)
-
-  #         if [ -n "$bad" ]; then
-  #           echo "❌ Only CSV files are allowed in this repository."
-  #           echo "Invalid files:"
-  #           echo "$bad"
-  #           exit 1
-  #         fi
-
-  #         echo "✅ All files are CSV"
