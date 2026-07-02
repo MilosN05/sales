@@ -42,8 +42,10 @@ jobs:
       - name: Pokreni_skriptu_za_csv
         run: |
           git fetch origin ${{ github.base_ref }}
-          files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
 
+          BASE=${{ github.base_ref }}
+
+          files=$(git diff --name-only origin/$BASE...HEAD)
           echo "Changed files:"
           echo "$files"
           
