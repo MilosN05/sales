@@ -53,24 +53,24 @@ jobs:
     runs-on: ubuntu-latest
   
     steps:
-      - uses: actions/checkout@v4
+       - uses: actions/checkout@v4
         with:
-          fetch-depth: 2
-  
-      - name: Check changed files
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            files=$(git diff --name-only origin/${{ github.base_ref }} HEAD)
-          else
-            files=$(git diff --name-only HEAD~1 HEAD)
-          fi
-  
+          fetch-depth: 0
+
+       - name: Check only CSV files
+         run: |
+          files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+
+          echo "Changed files:"
           echo "$files"
-  
-          invalid=$(echo "$files" | grep -v '^data/' || true)
-  
-          if [ -n "$invalid" ]; then
-            echo "❌ Samo fajlovi unutar DATA direktorijuma mogu da se menjaju."
-            echo "$invalid"
+
+          bad=$(echo "$files" | grep -v '\.csv$' || true)
+
+          if [ -n "$bad" ]; then
+            echo "❌ Only CSV files are allowed in this repository."
+            echo "Invalid files:"
+            echo "$bad"
             exit 1
-            fi
+          fi
+
+          echo "✅ All files are CSV"
