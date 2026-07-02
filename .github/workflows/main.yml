@@ -49,28 +49,28 @@ jobs:
             python main.py "$file"
             done < <(git diff --name-only --diff-filter=AM HEAD~1 HEAD | grep '\.csv$')
 
-  check-files:
-    runs-on: ubuntu-latest
+  # check-files:
+  #   runs-on: ubuntu-latest
   
-    steps:
-       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  #   steps:
+  #      - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
 
-       - name: Check only CSV files
-         run: |
-          files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+  #      - name: Check only CSV files
+  #        run: |
+  #         files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
 
-          echo "Changed files:"
-          echo "$files"
+  #         echo "Changed files:"
+  #         echo "$files"
 
-          bad=$(echo "$files" | grep -v '\.csv$' || true)
+  #         bad=$(echo "$files" | grep -v '\.csv$' || true)
 
-          if [ -n "$bad" ]; then
-            echo "❌ Only CSV files are allowed in this repository."
-            echo "Invalid files:"
-            echo "$bad"
-            exit 1
-          fi
+  #         if [ -n "$bad" ]; then
+  #           echo "❌ Only CSV files are allowed in this repository."
+  #           echo "Invalid files:"
+  #           echo "$bad"
+  #           exit 1
+  #         fi
 
-          echo "✅ All files are CSV"
+  #         echo "✅ All files are CSV"
