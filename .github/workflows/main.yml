@@ -41,6 +41,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Pokreni_skriptu_za_csv
         run: |
+          git fetch origin ${{ github.base_ref }}
           files=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
 
           echo "Changed files:"
