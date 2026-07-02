@@ -1,14 +1,30 @@
 import great_expectations as gx, pandas as pd
+import sys
+from pathlib import Path
 
 #Provera verzije
 print(f"Verzija GX-a: {gx.__version__}")
+
+ucitaj_fajl = "data/product_sales_dataset_final.csv"
+if len(sys.argv)==2 and sys.argv[1].endswith(".csv") :
+    if Path(f"data/{sys.argv[1]}").exists():
+        print(f"Ucitavanje: {sys.argv[1]}")
+        ucitaj_fajl=f"data/{sys.argv[1]}"
+    else:
+        sys.stderr.write(f"Dati {sys.argv[1]} fajl NE POSTOJI u data direktorijumu, pokrecemo {ucitaj_fajl} !\n")
+        
+
+
+print(f"Fajl za ucitavanje: {ucitaj_fajl}")
 
 
 #podaci
 def izvuci_godinu(str):
     return int(str.split('-')[2])
 
-df = pd.read_csv("data/product_sales_dataset_final.csv")
+
+
+df = pd.read_csv(ucitaj_fajl)
 
 
 try:
