@@ -44,3 +44,9 @@ jobs:
           pip install -r requirements.txt 
           python main.py
 
+      - name: Upload Data Docs
+        uses: actions/upload-artifact@v4
+        with:
+          name: data-docs
+          path: gx/uncommitted/data_docs/local_site
+
