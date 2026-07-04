@@ -333,6 +333,7 @@ for i,csv_file in enumerate(csv_files):
 
     batch_parameters_df={"dataframe":df}
     validation_results = validation_definition.run(batch_parameters=batch_parameters_df)
+    print(context.get_docs_sites_urls())
     context.build_data_docs()
     if not validation_results.success:
         print(f"Ne uspesan: {csv_file}\n\n")
