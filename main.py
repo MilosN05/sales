@@ -274,7 +274,15 @@ def izvuci_godinu(str):
     return int(str.split('-')[2])
 
 csv_folder = Path.cwd()/"data"
-csv_files = [csv_file for csv_file in csv_folder.iterdir() if csv_file.suffix==".csv"]
+csv_files =[]
+# csv_files = [csv_file for csv_file in csv_folder.iterdir() if csv_file.suffix==".csv"]
+
+for csv_file in csv_folder.iterdir():
+    if csv_file.suffix == ".csv":
+        csv_files.append(csv_file)
+    else:
+        print(f"Svi fajlovi ISKLJUCIVO moraju biti tipa csv, izbaci one koji nisu !")
+        sys.exit(1)
 
 
 for csv_file in csv_files:
