@@ -8,13 +8,13 @@ on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main" ]
-    paths: 
-      - "data/*.csv"
-      - ".github/workflows/main.yml"
+    # paths: 
+    #   - "data/*.csv"
+    #   - ".github/workflows/main.yml"
   pull_request:
     branches: [ "main" ]
-    paths: 
-      - "data/*.csv"
+    # paths: 
+    #   - "data/*.csv"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
