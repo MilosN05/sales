@@ -1,17 +1,48 @@
+from unittest import result
+
 import great_expectations as gx, pandas as pd
 import sys
 from pathlib import Path
 
-#Provera verzije
+
+
+# Provera verzije
 print(f"Verzija GX-a: {gx.__version__}")
-#context
-context = gx.get_context()
+# context
+context = gx.get_context(mode="file")
 
 # Spajanje sa poadcima i kreiranje Batch-a
-odakle_dolaze_podaci = context.data_sources.add_pandas("pandas")
-naziv_podataka = odakle_dolaze_podaci.add_dataframe_asset("sales/prodaja")
-sta_je_batch = naziv_podataka.add_batch_definition_whole_dataframe("sales_batch")
-suite = gx.ExpectationSuite(name="skup_uslova")
+odakle_dolaze_podaci = naziv_podataka=sta_je_batch=suite=validation_definition =None
+# print(context.data_sources.get("pandas"))
+
+
+try:
+    odakle_dolaze_podaci=context.data_sources.get("pandas")
+    naziv_podataka=odakle_dolaze_podaci.get_asset("salesprodaja")
+    sta_je_batch=naziv_podataka.get_batch_definition("salesbatch")
+    suite = context.suites.get("skupuslova")
+    validation_definition=context.validation_definitions.get("validacija1")
+except KeyError as ke:
+    odakle_dolaze_podaci = context.data_sources.add_pandas("pandas")
+    naziv_podataka = odakle_dolaze_podaci.add_dataframe_asset("salesprodaja")
+    sta_je_batch = naziv_podataka.add_batch_definition_whole_dataframe("salesbatch")
+    suite = gx.ExpectationSuite(name="skupuslova")
+    suite = context.suites.add(suite)
+
+    validation_definition = gx.ValidationDefinition(
+        data=sta_je_batch, suite=suite, name="validacija1"
+    )
+
+
+except Exception as ie:
+    print(f"Molimo Vas obrisite folder 'gx' i pokrenite ponovo.")
+    sys.exit(1)
+
+
+
+# print(odakle_dolaze_podaci)
+
+
 
 # ORDER ID
 
@@ -256,26 +287,15 @@ suite.add_expectation(
 )
 
 
-# ucitaj_fajl = "data/product_sales_dataset_final.csv"
-# if len(sys.argv)==2 and sys.argv[1].endswith(".csv") :
-#     if Path(f"data/{sys.argv[1]}").exists():
-#         print(f"Ucitavanje: {sys.argv[1]}")
-#         ucitaj_fajl=f"data/{sys.argv[1]}"
-#     else:
-#         sys.stderr.write(f"Dati {sys.argv[1]} fajl NE POSTOJI u data direktorijumu, pokrecemo {ucitaj_fajl} !\n")
 
 
-
-# print(f"Fajl za ucitavanje: {ucitaj_fajl}")
-
-
-#podaci
+# podaci
 def izvuci_godinu(str):
     return int(str.split('-')[2])
 
-csv_folder = Path.cwd()/"data"
-csv_files =[]
-# csv_files = [csv_file for csv_file in csv_folder.iterdir() if csv_file.suffix==".csv"]
+
+csv_folder = Path.cwd() / "data"
+csv_files = []
 
 for csv_file in csv_folder.iterdir():
     if csv_file.is_file() and csv_file.suffix == ".csv":
@@ -284,40 +304,21 @@ for csv_file in csv_folder.iterdir():
         print(f"Svi fajlovi ISKLJUCIVO moraju biti tipa csv, izbaci one koji nisu !")
         sys.exit(1)
 
-
-for csv_file in csv_files:
+for i,csv_file in enumerate(csv_files):
     df = pd.read_csv(csv_file)
-
 
     try:
         df["Order_Date"] = pd.to_datetime(df["Order_Date"], errors="coerce", format="%m-%d-%y")
 
-
-
-        df["Quantity"]=pd.to_numeric(df["Quantity"],errors="coerce")
-        df["Unit_Price"]=pd.to_numeric(df["Unit_Price"],errors="coerce")
-        df["Revenue"]=pd.to_numeric(df["Revenue"],errors="coerce")
-        df["Profit"]=pd.to_numeric(df["Profit"],errors="coerce")
-
+        df["Quantity"] = pd.to_numeric(df["Quantity"], errors="coerce")
+        df["Unit_Price"] = pd.to_numeric(df["Unit_Price"], errors="coerce")
+        df["Revenue"] = pd.to_numeric(df["Revenue"], errors="coerce")
+        df["Profit"] = pd.to_numeric(df["Profit"], errors="coerce")
 
         ##Eventualno dodati u budućnosti
         # df["Customer_Name"] = df["Customer_Name"].str.replace(r"\b(Mr|Mrs|Ms|Miss|Dr)\.?\s*", "", regex=True).str.replace(r"\s+(MD|DVM)$", "", regex=True).str.strip()
-        df["City"] = df["City"].str.replace(".", "",regex=False)
+        df["City"] = df["City"].str.replace(".", "", regex=False)
 
-
-
-        # titles = ["Mr.", "Mrs.", "Ms.", "Miss", "Dr."]
-        # suffixes = ["MD", "DVM","PhD","DDS","Jr."]
-        #
-        # def otkloni_prefix_suffix(string):
-        #     for title in titles:
-        #         string=string.replace(title + " ","")
-        #
-        #
-        #
-        #     return string
-        #
-        # df["Customer_Name"]=df["Customer_Name"].apply(otkloni_prefix_suffix)
 
 
         df.dropna(how="all", inplace=True)
@@ -326,18 +327,16 @@ for csv_file in csv_files:
         df["Order_Year"] = df["Order_Date"].dt.year
 
     except KeyError as ke:
-        print(f"Greska, kolone nisu kakve trebaju biti !!! Proveri da nemas neke dodatne slucajne razmake kod naziva kolona !")
-
-    batch = sta_je_batch.get_batch(batch_parameters={"dataframe": df})
-
-    result = batch.validate(suite)
+        print(
+            f"Greska, kolone nisu kakve trebaju biti !!! Proveri da nemas neke dodatne slucajne razmake kod naziva kolona !")
 
 
-    print(f"Uspesno: {result.success}" )
-
-    if not result.success:
+    batch_parameters_df={"dataframe":df}
+    validation_results = validation_definition.run(batch_parameters=batch_parameters_df)
+    context.build_data_docs()
+    if not validation_results.success:
         print(f"Ne uspesan: {csv_file}\n\n")
-        print(f"Izvestaj: {result}")
+        print(f"Izvestaj: {validation_results}")
         sys.exit(1)
 
 
