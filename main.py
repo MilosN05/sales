@@ -278,7 +278,7 @@ csv_files =[]
 # csv_files = [csv_file for csv_file in csv_folder.iterdir() if csv_file.suffix==".csv"]
 
 for csv_file in csv_folder.iterdir():
-    if csv_file.suffix == ".csv":
+    if csv_file.is_file() and csv_file.suffix == ".csv":
         csv_files.append(csv_file)
     else:
         print(f"Svi fajlovi ISKLJUCIVO moraju biti tipa csv, izbaci one koji nisu !")
