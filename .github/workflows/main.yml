@@ -44,6 +44,9 @@ jobs:
           pip install -r requirements.txt 
           python main.py
 
+      - name: napravi_pauzu
+        run: sleep 2
+
       - name: okaci_izvestaj
         uses: actions/upload-artifact@v4
         with:
