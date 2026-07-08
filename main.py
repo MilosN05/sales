@@ -1,5 +1,3 @@
-from unittest import result
-
 import great_expectations as gx, pandas as pd
 import sys
 from pathlib import Path
@@ -13,7 +11,7 @@ context = gx.get_context(mode="file")
 
 # Spajanje sa poadcima i kreiranje Batch-a
 odakle_dolaze_podaci = naziv_podataka=sta_je_batch=suite=validation_definition =None
-# print(context.data_sources.get("pandas"))
+
 
 
 try:
@@ -40,7 +38,7 @@ except Exception as ie:
 
 
 
-# print(odakle_dolaze_podaci)
+
 
 
 
@@ -308,7 +306,6 @@ for i,csv_file in enumerate(csv_files):
     df = pd.read_csv(csv_file)
 
     try:
-        print(df.dtypes)
 
         df["Order_Date"] = pd.to_datetime(df["Order_Date"], errors="coerce", format="%m-%d-%y")
         df["Order_ID"] = pd.to_numeric(df["Order_ID"],errors="coerce").astype("Int64")
