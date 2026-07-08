@@ -1,5 +1,3 @@
-from unittest import result
-
 import great_expectations as gx, pandas as pd
 import sys
 from pathlib import Path
@@ -13,7 +11,7 @@ context = gx.get_context(mode="file")
 
 # Spajanje sa poadcima i kreiranje Batch-a
 odakle_dolaze_podaci = naziv_podataka=sta_je_batch=suite=validation_definition =None
-# print(context.data_sources.get("pandas"))
+
 
 
 try:
@@ -40,7 +38,7 @@ except Exception as ie:
 
 
 
-# print(odakle_dolaze_podaci)
+
 
 
 
@@ -68,7 +66,7 @@ for column in ne_sme_biti_null:
 suite.add_expectation(
     gx.expectations.ExpectColumnValuesToBeOfType(
         column="Order_ID",
-        type_="int64",
+        type_="Int64",
 
     )
 )
@@ -237,7 +235,7 @@ suite.add_expectation(
 suite.add_expectation(
     gx.expectations.ExpectColumnValuesToBeOfType(
         column="Quantity",
-        type_="int64"
+        type_="Int64"
     )
 )
 
@@ -308,12 +306,14 @@ for i,csv_file in enumerate(csv_files):
     df = pd.read_csv(csv_file)
 
     try:
-        df["Order_Date"] = pd.to_datetime(df["Order_Date"], errors="coerce", format="%m-%d-%y")
 
-        df["Quantity"] = pd.to_numeric(df["Quantity"], errors="coerce")
-        df["Unit_Price"] = pd.to_numeric(df["Unit_Price"], errors="coerce")
-        df["Revenue"] = pd.to_numeric(df["Revenue"], errors="coerce")
-        df["Profit"] = pd.to_numeric(df["Profit"], errors="coerce")
+        df["Order_Date"] = pd.to_datetime(df["Order_Date"], errors="coerce", format="%m-%d-%y")
+        df["Order_ID"] = pd.to_numeric(df["Order_ID"],errors="coerce").astype("Int64")
+        df["Quantity"] = pd.to_numeric(df["Quantity"], errors="coerce").astype("Int64")
+        df["Unit_Price"] = pd.to_numeric(df["Unit_Price"], errors="coerce").astype("float64")
+        df["Revenue"] = pd.to_numeric(df["Revenue"], errors="coerce").astype("float64")
+        df["Profit"] = pd.to_numeric(df["Profit"], errors="coerce").astype("float64")
+
 
         ##Eventualno dodati u budućnosti
         # df["Customer_Name"] = df["Customer_Name"].str.replace(r"\b(Mr|Mrs|Ms|Miss|Dr)\.?\s*", "", regex=True).str.replace(r"\s+(MD|DVM)$", "", regex=True).str.strip()
