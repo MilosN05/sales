@@ -44,7 +44,7 @@ except Exception as ie:
 
 # ORDER ID
 
-ne_sme_biti_null = ["Order_ID", "Region", "Country", "City", "Product_Name","Quantity","Unit_Price","Revenue","Profit"]
+ne_sme_biti_null = ["Order_ID", "Region", "Country", "City", "Product_Name","Quantity","Unit_Price","Revenue","Profit", "Order_Year"]
 A_Z_Pocetno_veliko = ["Region", "Country", "State", "City"]
 
 for column in A_Z_Pocetno_veliko:
