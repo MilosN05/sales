@@ -341,5 +341,3 @@ for i,csv_file in enumerate(csv_files):
 
 
     ##prvi komentar
-
-    ##drugi komentar i drugi commit
