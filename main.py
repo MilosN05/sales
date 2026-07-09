@@ -307,6 +307,7 @@ for i,csv_file in enumerate(csv_files):
 
     try:
 
+
         df["Order_Date"] = pd.to_datetime(df["Order_Date"], errors="coerce", format="%m-%d-%y")
         df["Order_ID"] = pd.to_numeric(df["Order_ID"],errors="coerce")
         df["Quantity"] = pd.to_numeric(df["Quantity"], errors="coerce")
